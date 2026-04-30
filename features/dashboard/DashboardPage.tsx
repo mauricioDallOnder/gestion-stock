@@ -588,9 +588,9 @@ export function DashboardPage() {
                         >
                           <Typography
                             variant="body2"
-                            sx={{fontWeight:"700"}}
+                            sx={{fontWeight:"700", mr:"1"}}
                             noWrap
-                            sx={{ mr: 1 }}
+                           
                           >
                             {produit.nom}
                           </Typography>
