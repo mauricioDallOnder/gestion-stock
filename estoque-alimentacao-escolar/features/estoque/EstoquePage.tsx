@@ -18,73 +18,62 @@ import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { produtosMock } from "@/features/produtos/produtosMock";
 import { LoteEstoque, LoteEstoqueFormValues } from "@/types/estoque";
 import {
-  atualizarLoteEstoque,
-  calcularResumoEstoquePorProduto,
-  criarLoteEstoque,
-  getProdutoNome,
-  getStatusValidade,
-  loteParaFormValues,
+  calculerResumeStockParProduit,
+  getNomProduit,
+  getStatusValidite,
+  lotVersFormValues,
 } from "./estoqueUtils";
-import { lotesEstoqueMock } from "./estoqueMock";
 import { LoteEstoqueFormDialog } from "./LoteEstoqueFormDialog";
 import { LotesEstoqueTable } from "./LotesEstoqueTable";
 import { EstoqueResumoTable } from "./EstoqueResumoTable";
+import { useAppContext } from "@/context/AppContext";
 
 type EstoqueTab = "resumo" | "lotes";
 type FiltroValidade = "todos" | "vencidos" | "alertas" | "ok";
 
 export function EstoquePage() {
-  const [lotes, setLotes] = useState<LoteEstoque[]>(lotesEstoqueMock);
+  const { produtos, lotes, adicionarLote, editarLote, deletarLote } =
+    useAppContext();
+
   const [tab, setTab] = useState<EstoqueTab>("resumo");
   const [busca, setBusca] = useState("");
-  const [filtroValidade, setFiltroValidade] =
-    useState<FiltroValidade>("todos");
+  const [filtroValidade, setFiltroValidade] = useState<FiltroValidade>("todos");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loteEmEdicao, setLoteEmEdicao] = useState<LoteEstoque | null>(null);
 
-  const produtos = produtosMock;
-
-  const resumo = useMemo(() => {
-    return calcularResumoEstoquePorProduto(produtos, lotes);
-  }, [lotes, produtos]);
+  const resumo = useMemo(
+    () => calculerResumeStockParProduit(produtos, lotes),
+    [lotes, produtos]
+  );
 
   const lotesFiltrados = useMemo(() => {
     const buscaNormalizada = busca.trim().toLowerCase();
-
     return lotes
       .filter((lote) => {
-        const produtoNome = getProdutoNome(produtos, lote.produtoId).toLowerCase();
-
+        const produtoNome = getNomProduit(produtos, lote.produtoId).toLowerCase();
         const correspondeBusca = produtoNome.includes(buscaNormalizada);
-
-        const status = getStatusValidade(lote.dataValidade);
-
+        const status = getStatusValidite(lote.dataValidade);
         const correspondeValidade =
           filtroValidade === "todos" ||
-          (filtroValidade === "vencidos" && status === "vencido") ||
+          (filtroValidade === "vencidos" && status === "expire") ||
           (filtroValidade === "alertas" &&
-            ["critico", "atencao"].includes(status)) ||
+            ["critique", "attention"].includes(status)) ||
           (filtroValidade === "ok" && status === "ok");
-
         return correspondeBusca && correspondeValidade;
       })
       .sort((a, b) => a.dataValidade.localeCompare(b.dataValidade));
   }, [busca, filtroValidade, lotes, produtos]);
 
-  const totalLotes = lotes.length;
-
   const totalProdutosComEstoque = resumo.length;
-
+  const totalLotes = lotes.length;
   const totalAlertas = lotes.filter((lote) => {
-    const status = getStatusValidade(lote.dataValidade);
-    return status === "critico" || status === "atencao";
+    const status = getStatusValidite(lote.dataValidade);
+    return status === "critique" || status === "attention";
   }).length;
-
   const totalVencidos = lotes.filter(
-    (lote) => getStatusValidade(lote.dataValidade) === "vencido"
+    (lote) => getStatusValidite(lote.dataValidade) === "expire"
   ).length;
 
   function handleNovoLote() {
@@ -104,59 +93,41 @@ export function EstoquePage() {
 
   function handleSalvarLote(values: LoteEstoqueFormValues) {
     if (loteEmEdicao) {
-      setLotes((current) =>
-        current.map((lote) =>
-          lote.id === loteEmEdicao.id
-            ? atualizarLoteEstoque(lote, values)
-            : lote
-        )
-      );
+      editarLote(loteEmEdicao.id, values);
     } else {
-      setLotes((current) => [criarLoteEstoque(values), ...current]);
+      adicionarLote(values);
     }
-
     handleFecharDialog();
   }
 
   function handleDeleteLote(loteId: string) {
     const lote = lotes.find((item) => item.id === loteId);
-
-    if (!lote) {
-      return;
-    }
-
-    const produtoNome = getProdutoNome(produtos, lote.produtoId);
-
+    if (!lote) return;
+    const produtoNome = getNomProduit(produtos, lote.produtoId);
     const confirmou = window.confirm(
-      `Deseja realmente excluir o lote de "${produtoNome}"?`
+      `Voulez-vous vraiment supprimer le lot de "${produtoNome}"?`
     );
-
-    if (!confirmou) {
-      return;
-    }
-
-    setLotes((current) => current.filter((item) => item.id !== loteId));
+    if (!confirmou) return;
+    deletarLote(loteId);
   }
 
   return (
     <>
       <PageHeader
         title="Estoque"
-        description="Controle de recebimentos, lotes, saldos atuais e prazos de validade dos gêneros alimentícios."
+        description="Contrôle des réceptions, des lots, des soldes actuels et des dates de péremption des produits alimentaires."
       />
 
       <Grid container spacing={3} sx={{ mb: 3 }}>
         <Grid size={{ xs: 12, md: 3 }}>
           <Card>
             <CardContent>
-              <Stack sx={{direction:"row",alignItems:"center"}}spacing={2} >
+              <Stack sx={{direction:"row",alignItems:"center"}} spacing={2} >
                 <Inventory2OutlinedIcon color="primary" />
-
                 <Box>
                   <Typography variant="body2" color="text.secondary">
-                    Produtos com estoque
+                    Produits en stock
                   </Typography>
-
                   <Typography variant="h5">{totalProdutosComEstoque}</Typography>
                 </Box>
               </Stack>
@@ -167,14 +138,12 @@ export function EstoquePage() {
         <Grid size={{ xs: 12, md: 3 }}>
           <Card>
             <CardContent>
-              <Stack sx={{direction:"row",alignItems:"center"}}spacing={2}>
+              <Stack sx={{direction:"row",alignItems:"center"}} spacing={2}>
                 <Inventory2OutlinedIcon color="primary" />
-
                 <Box>
                   <Typography variant="body2" color="text.secondary">
-                    Lotes cadastrados
+                   Lots enregistrés
                   </Typography>
-
                   <Typography variant="h5">{totalLotes}</Typography>
                 </Box>
               </Stack>
@@ -185,14 +154,12 @@ export function EstoquePage() {
         <Grid size={{ xs: 12, md: 3 }}>
           <Card>
             <CardContent>
-              <Stack sx={{direction:"row",alignItems:"center"}}spacing={2}>
+              <Stack sx={{direction:"row",alignItems:"center"}} spacing={2}>
                 <WarningAmberOutlinedIcon color="warning" />
-
                 <Box>
                   <Typography variant="body2" color="text.secondary">
-                    Alertas de validade
+                   alertes d'expiration
                   </Typography>
-
                   <Typography variant="h5">{totalAlertas}</Typography>
                 </Box>
               </Stack>
@@ -203,14 +170,12 @@ export function EstoquePage() {
         <Grid size={{ xs: 12, md: 3 }}>
           <Card>
             <CardContent>
-              <Stack sx={{direction:"row",alignItems:"center"}}spacing={2}>
+              <Stack sx={{direction:"row",alignItems:"center"}} spacing={2}>
                 <ErrorOutlineOutlinedIcon color="error" />
-
                 <Box>
                   <Typography variant="body2" color="text.secondary">
-                    Lotes vencidos
+                  Lots expirés
                   </Typography>
-
                   <Typography variant="h5">{totalVencidos}</Typography>
                 </Box>
               </Stack>
@@ -220,24 +185,17 @@ export function EstoquePage() {
       </Grid>
 
       <Stack
-      sx={{direction:"row",alignItems:"center",md:"3", justifyContent:"space-between"}}spacing={2}
+        sx={{direction:"row",alignItems:"center",justifyContent:"space-between", mb:"3"}} spacing={2}
         
-       
-        
-       
       >
-        <Stack sx={{direction:"row",flexWrap:"wrap"}}spacing={1}  useFlexGap>
+        <Stack sx={{direction:"row",flexWrap:"wrap"}} spacing={1} useFlexGap>
           <Chip label={`${totalLotes} lotes`} />
           <Chip label={`${totalAlertas} alertas`} color="warning" />
           <Chip label={`${totalVencidos} vencidos`} color="error" />
         </Stack>
 
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleNovoLote}
-        >
-          Novo recebimento
+        <Button variant="contained" startIcon={<AddIcon />} onClick={handleNovoLote}>
+          Nouveau réception
         </Button>
       </Stack>
 
@@ -248,8 +206,8 @@ export function EstoquePage() {
             onChange={(_, value: EstoqueTab) => setTab(value)}
             sx={{ mb: 3 }}
           >
-            <Tab value="resumo" label="Resumo por produto" />
-            <Tab value="lotes" label="Lotes e validades" />
+            <Tab value="resumo" label="Sommaire par produit" />
+            <Tab value="lotes" label="Lots et dates de péremption" />
           </Tabs>
 
           {tab === "resumo" ? (
@@ -262,25 +220,24 @@ export function EstoquePage() {
                 sx={{ mb: 3 }}
               >
                 <TextField
-                  label="Buscar produto"
-                  placeholder="Exemplo: arroz, feijão, leite..."
+                  label="Rechercher un produit"
+                  placeholder="Exemple: riz, poivre, lait..."
                   value={busca}
-                  onChange={(event) => setBusca(event.target.value)}
+                  onChange={(e) => setBusca(e.target.value)}
                   fullWidth
                 />
-
                 <TextField
                   select
-                  label="Validade"
+                  label="Date de péremption"
                   value={filtroValidade}
-                  onChange={(event) =>
-                    setFiltroValidade(event.target.value as FiltroValidade)
+                  onChange={(e) =>
+                    setFiltroValidade(e.target.value as FiltroValidade)
                   }
                   sx={{ minWidth: { xs: "100%", md: 240 } }}
                 >
-                  <MenuItem value="todos">Todos</MenuItem>
-                  <MenuItem value="vencidos">Vencidos</MenuItem>
-                  <MenuItem value="alertas">Crítico / atenção</MenuItem>
+                  <MenuItem value="todos">Tous</MenuItem>
+                  <MenuItem value="vencidos">Expirés</MenuItem>
+                  <MenuItem value="alertas">Critique / Attention</MenuItem>
                   <MenuItem value="ok">OK</MenuItem>
                 </TextField>
               </Stack>
@@ -296,9 +253,7 @@ export function EstoquePage() {
 
           <Box sx={{ mt: 3 }}>
             <Typography variant="body2" color="text.secondary">
-              Nesta versão demonstrativa, os lotes ficam apenas na memória do
-              navegador. Ao atualizar a página, os dados voltam ao estado
-              inicial. Depois conectaremos isso ao banco de dados.
+              Données sauvegardées automatiquement dans le navigateur via localStorage.
             </Typography>
           </Box>
         </CardContent>
@@ -308,9 +263,7 @@ export function EstoquePage() {
         open={dialogOpen}
         mode={loteEmEdicao ? "edit" : "create"}
         produtos={produtos}
-        initialValues={
-          loteEmEdicao ? loteParaFormValues(loteEmEdicao) : undefined
-        }
+        initialValues={loteEmEdicao ? lotVersFormValues(loteEmEdicao) : undefined}
         onClose={handleFecharDialog}
         onSubmit={handleSalvarLote}
       />

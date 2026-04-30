@@ -1,13 +1,13 @@
-export const origensEstoque = ["rancho", "ajuste", "doacao", "outro"] as const;
+export const origensEstoque = ["ferme", "ajustement", "don", "autre"] as const;
 
 export type OrigemEstoque = (typeof origensEstoque)[number];
 
 export type StatusValidade =
-  | "vencido"
-  | "critico"
-  | "atencao"
+  | "expire"
+  | "critique"
+  | "attention"
   | "ok"
-  | "sem_validade";
+  | "sans_validite";
 
 export type LoteEstoque = {
   id: string;

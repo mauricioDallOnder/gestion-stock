@@ -11,9 +11,9 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { EstoqueResumoProduto } from "@/types/estoque";
 import {
-  formatarData,
-  getStatusValidadeColor,
-  statusValidadeLabels,
+  formaterDate,
+  getStatusValiditeColor,
+  statusValiditeLabels,
 } from "./estoqueUtils";
 
 type EstoqueResumoTableProps = {
@@ -32,11 +32,11 @@ export function EstoqueResumoTable({ resumo }: EstoqueResumoTableProps) {
           borderRadius: 3,
         }}
       >
-        <Typography variant="h6">Nenhum produto com estoque atual</Typography>
+        <Typography variant="h6">Aucun produit avec stock actuel</Typography>
 
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          O resumo aparecerá quando houver lotes com quantidade atual maior que
-          zero.
+          Le résumé apparaîtra lorsqu’il y aura des lots avec une quantité
+          actuelle supérieure à zéro.
         </Typography>
       </Box>
     );
@@ -47,11 +47,11 @@ export function EstoqueResumoTable({ resumo }: EstoqueResumoTableProps) {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Produto</TableCell>
-            <TableCell align="right">Quantidade total</TableCell>
-            <TableCell align="right">Lotes</TableCell>
-            <TableCell>Validade mais próxima</TableCell>
-            <TableCell>Status</TableCell>
+            <TableCell>Produit</TableCell>
+            <TableCell align="right">Quantité totale</TableCell>
+            <TableCell align="right">Lots</TableCell>
+            <TableCell>Date de péremption la plus proche</TableCell>
+            <TableCell>Statut</TableCell>
           </TableRow>
         </TableHead>
 
@@ -59,23 +59,25 @@ export function EstoqueResumoTable({ resumo }: EstoqueResumoTableProps) {
           {resumo.map((item) => (
             <TableRow key={item.produtoId} hover>
               <TableCell>
-                <Typography sx={{fontWeight:"700"}}>{item.produtoNome}</Typography>
+                <Typography sx={{ fontWeight: "700" }}>
+                  {item.produtoNome}
+                </Typography>
               </TableCell>
 
               <TableCell align="right">
-                <Typography sx={{fontWeight:"700"}}>
+                <Typography sx={{ fontWeight: "700" }}>
                   {item.quantidadeTotal} {item.unidade}
                 </Typography>
               </TableCell>
 
               <TableCell align="right">{item.quantidadeLotes}</TableCell>
 
-              <TableCell>{formatarData(item.validadeMaisProxima)}</TableCell>
+              <TableCell>{formaterDate(item.validadeMaisProxima)}</TableCell>
 
               <TableCell>
                 <Chip
-                  label={statusValidadeLabels[item.statusValidade]}
-                  color={getStatusValidadeColor(item.statusValidade)}
+                  label={statusValiditeLabels[item.statusValidade]}
+                  color={getStatusValiditeColor(item.statusValidade)}
                   size="small"
                 />
               </TableCell>

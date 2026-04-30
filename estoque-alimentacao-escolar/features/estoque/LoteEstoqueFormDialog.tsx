@@ -13,8 +13,8 @@ import { LoteEstoqueFormValues, origensEstoque } from "@/types/estoque";
 import { Produto } from "@/types/produto";
 import { loteEstoqueSchema } from "./estoqueSchema";
 import {
-  getLoteDefaultValues,
-  origemEstoqueLabels,
+  getLotDefaultValues,
+  origineStockLabels,
 } from "./estoqueUtils";
 
 type LoteEstoqueFormDialogProps = {
@@ -38,7 +38,7 @@ export function LoteEstoqueFormDialog({
   onClose,
   onSubmit,
 }: LoteEstoqueFormDialogProps) {
-  const defaultValues = useMemo(() => getLoteDefaultValues(), []);
+  const defaultValues = useMemo(() => getLotDefaultValues(), []);
 
   const [values, setValues] = useState<LoteEstoqueFormValues>(defaultValues);
   const [errors, setErrors] = useState<LoteEstoqueFormErrors>({});
@@ -89,18 +89,18 @@ export function LoteEstoqueFormDialog({
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
-        {mode === "create" ? "Novo recebimento / lote" : "Editar lote"}
+        {mode === "create" ? "Nouvelle réception / lot" : "Modifier le lot"}
       </DialogTitle>
 
       <DialogContent dividers>
         <Stack spacing={3} sx={{ pt: 1 }}>
           <TextField
             select
-            label="Produto"
+            label="Produit"
             value={values.produtoId}
             onChange={(event) => handleChange("produtoId", event.target.value)}
             error={Boolean(errors.produtoId)}
-            helperText={errors.produtoId ?? "Selecione o gênero alimentício."}
+            helperText={errors.produtoId ?? "Sélectionnez le produit alimentaire."}
             fullWidth
             autoFocus
           >
@@ -114,7 +114,7 @@ export function LoteEstoqueFormDialog({
           </TextField>
 
           <TextField
-            label="Quantidade recebida"
+            label="Quantité reçue"
             type="number"
             value={values.quantidadeInicial}
             onChange={(event) => {
@@ -129,7 +129,7 @@ export function LoteEstoqueFormDialog({
             error={Boolean(errors.quantidadeInicial)}
             helperText={
               errors.quantidadeInicial ??
-              "Quantidade que entrou no estoque neste recebimento."
+              "Quantité entrée en stock lors de cette réception."
             }
             fullWidth
             slotProps={{
@@ -141,7 +141,7 @@ export function LoteEstoqueFormDialog({
           />
 
           <TextField
-            label="Quantidade atual"
+            label="Quantité actuelle"
             type="number"
             value={values.quantidadeAtual}
             onChange={(event) =>
@@ -150,7 +150,7 @@ export function LoteEstoqueFormDialog({
             error={Boolean(errors.quantidadeAtual)}
             helperText={
               errors.quantidadeAtual ??
-              "Saldo físico ainda existente deste lote."
+              "Solde physique encore disponible pour ce lot."
             }
             fullWidth
             slotProps={{
@@ -162,14 +162,14 @@ export function LoteEstoqueFormDialog({
           />
 
           <TextField
-            label="Data de recebimento"
+            label="Date de réception"
             type="date"
             value={values.dataRecebimento}
             onChange={(event) =>
               handleChange("dataRecebimento", event.target.value)
             }
             error={Boolean(errors.dataRecebimento)}
-            helperText={errors.dataRecebimento ?? "Data de entrada no estoque."}
+            helperText={errors.dataRecebimento ?? "Date d’entrée en stock."}
             fullWidth
             slotProps={{
               inputLabel: {
@@ -179,14 +179,14 @@ export function LoteEstoqueFormDialog({
           />
 
           <TextField
-            label="Data de validade"
+            label="Date de péremption"
             type="date"
             value={values.dataValidade}
             onChange={(event) => handleChange("dataValidade", event.target.value)}
             error={Boolean(errors.dataValidade)}
             helperText={
               errors.dataValidade ??
-              "Obrigatório para gerar alertas de vencimento."
+              "Obligatoire pour générer les alertes de péremption."
             }
             fullWidth
             slotProps={{
@@ -198,7 +198,7 @@ export function LoteEstoqueFormDialog({
 
           <TextField
             select
-            label="Origem"
+            label="Origine"
             value={values.origem}
             onChange={(event) =>
               handleChange(
@@ -207,24 +207,24 @@ export function LoteEstoqueFormDialog({
               )
             }
             error={Boolean(errors.origem)}
-            helperText={errors.origem ?? "Origem da entrada no estoque."}
+            helperText={errors.origem ?? "Origine de l’entrée en stock."}
             fullWidth
           >
             {origensEstoque.map((origem) => (
               <MenuItem key={origem} value={origem}>
-                {origemEstoqueLabels[origem]}
+                {origineStockLabels[origem]}
               </MenuItem>
             ))}
           </TextField>
 
           <TextField
-            label="Observação"
+            label="Observation"
             value={values.observacao}
             onChange={(event) => handleChange("observacao", event.target.value)}
             error={Boolean(errors.observacao)}
             helperText={
               errors.observacao ??
-              "Exemplo: priorizar uso, divergência, ajuste manual etc."
+              "Exemple : prioriser l’utilisation, divergence, ajustement manuel, etc."
             }
             fullWidth
             multiline
@@ -235,11 +235,11 @@ export function LoteEstoqueFormDialog({
 
       <DialogActions sx={{ px: 3, py: 2 }}>
         <Button onClick={onClose} color="inherit">
-          Cancelar
+          Annuler
         </Button>
 
         <Button onClick={handleSubmit} variant="contained">
-          {mode === "create" ? "Registrar recebimento" : "Salvar alterações"}
+          {mode === "create" ? "Enregistrer la réception" : "Enregistrer les modifications"}
         </Button>
       </DialogActions>
     </Dialog>

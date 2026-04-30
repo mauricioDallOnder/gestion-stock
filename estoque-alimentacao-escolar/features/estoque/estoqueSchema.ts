@@ -3,33 +3,33 @@ import { origensEstoque } from "@/types/estoque";
 
 export const loteEstoqueSchema = z
   .object({
-    produtoId: z.string().min(1, "Selecione um produto."),
+    produtoId: z.string().min(1, "Sélectionnez un produit."),
 
     quantidadeInicial: z.coerce
       .number()
-      .positive("A quantidade recebida deve ser maior que zero.")
-      .max(999999, "Quantidade muito alta."),
+      .positive("La quantité reçue doit être supérieure à zéro.")
+      .max(999999, "Quantité trop élevée."),
 
     quantidadeAtual: z.coerce
       .number()
-      .min(0, "A quantidade atual não pode ser negativa.")
-      .max(999999, "Quantidade muito alta."),
+      .min(0, "La quantité actuelle ne peut pas être négative.")
+      .max(999999, "Quantité trop élevée."),
 
-    dataRecebimento: z.string().min(1, "Informe a data de recebimento."),
+    dataRecebimento: z.string().min(1, "Renseignez la date de réception."),
 
-    dataValidade: z.string().min(1, "Informe a data de validade."),
+    dataValidade: z.string().min(1, "Renseignez la date de péremption."),
 
     origem: z.enum(origensEstoque),
 
-    observacao: z.string().max(300, "A observação deve ter no máximo 300 caracteres."),
+    observacao: z.string().max(300, "L’observation doit contenir au maximum 300 caractères."),
   })
   .refine((data) => data.quantidadeAtual <= data.quantidadeInicial, {
     path: ["quantidadeAtual"],
-    message: "A quantidade atual não pode ser maior que a quantidade recebida.",
+    message: "La quantité actuelle ne peut pas être supérieure à la quantité reçue.",
   })
   .refine((data) => data.dataValidade >= data.dataRecebimento, {
     path: ["dataValidade"],
-    message: "A validade não pode ser anterior ao recebimento.",
+    message: "La date de péremption ne peut pas être antérieure à la réception.",
   });
 
 export type LoteEstoqueSchemaInput = z.infer<typeof loteEstoqueSchema>;

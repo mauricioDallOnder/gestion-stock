@@ -7,80 +7,80 @@ import {
   StatusValidade,
 } from "@/types/estoque";
 
-export const origemEstoqueLabels: Record<OrigemEstoque, string> = {
-  rancho: "Rancho",
-  ajuste: "Ajuste",
-  doacao: "Doação",
-  outro: "Outro",
+export const origineStockLabels: Record<OrigemEstoque, string> = {
+  ferme: "Ferme",
+  ajustement: "Ajustement",
+  don: "Don",
+  autre: "Autre",
 };
 
-export const statusValidadeLabels: Record<StatusValidade, string> = {
-  vencido: "Vencido",
-  critico: "Crítico",
-  atencao: "Atenção",
+export const statusValiditeLabels: Record<StatusValidade, string> = {
+  expire: "Expiré",
+  critique: "Critique",
+  attention: "Attention",
   ok: "OK",
-  sem_validade: "Sem validade",
+  sans_validite: "Sans date de péremption",
 };
 
-export function getHojeISO() {
-  const hoje = new Date();
-  const ano = hoje.getFullYear();
-  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-  const dia = String(hoje.getDate()).padStart(2, "0");
+export function getAujourdHuiISO() {
+  const aujourdHui = new Date();
+  const annee = aujourdHui.getFullYear();
+  const mois = String(aujourdHui.getMonth() + 1).padStart(2, "0");
+  const jour = String(aujourdHui.getDate()).padStart(2, "0");
 
-  return `${ano}-${mes}-${dia}`;
+  return `${annee}-${mois}-${jour}`;
 }
 
-export function formatarData(dataISO?: string) {
+export function formaterDate(dataISO?: string) {
   if (!dataISO) {
     return "-";
   }
 
-  return new Date(`${dataISO}T00:00:00`).toLocaleDateString("pt-BR");
+  return new Date(`${dataISO}T00:00:00`).toLocaleDateString("fr-FR");
 }
 
-export function calcularDiasAteValidade(dataValidade?: string) {
-  if (!dataValidade) {
+export function calculerJoursJusquaValidite(dataValidite?: string) {
+  if (!dataValidite) {
     return null;
   }
 
-  const hoje = new Date(`${getHojeISO()}T00:00:00`);
-  const validade = new Date(`${dataValidade}T00:00:00`);
-  const diferencaMs = validade.getTime() - hoje.getTime();
+  const aujourdHui = new Date(`${getAujourdHuiISO()}T00:00:00`);
+  const validite = new Date(`${dataValidite}T00:00:00`);
+  const differenceMs = validite.getTime() - aujourdHui.getTime();
 
-  return Math.ceil(diferencaMs / 86_400_000);
+  return Math.ceil(differenceMs / 86_400_000);
 }
 
-export function getStatusValidade(dataValidade?: string): StatusValidade {
-  const dias = calcularDiasAteValidade(dataValidade);
+export function getStatusValidite(dataValidite?: string): StatusValidade {
+  const jours = calculerJoursJusquaValidite(dataValidite);
 
-  if (dias === null) {
-    return "sem_validade";
+  if (jours === null) {
+    return "sans_validite";
   }
 
-  if (dias < 0) {
-    return "vencido";
+  if (jours < 0) {
+    return "expire";
   }
 
-  if (dias <= 15) {
-    return "critico";
+  if (jours <= 15) {
+    return "critique";
   }
 
-  if (dias <= 45) {
-    return "atencao";
+  if (jours <= 45) {
+    return "attention";
   }
 
   return "ok";
 }
 
-export function getStatusValidadeColor(
+export function getStatusValiditeColor(
   status: StatusValidade
 ): "error" | "warning" | "success" | "default" {
-  if (status === "vencido" || status === "critico") {
+  if (status === "expire" || status === "critique") {
     return "error";
   }
 
-  if (status === "atencao") {
+  if (status === "attention") {
     return "warning";
   }
 
@@ -91,8 +91,8 @@ export function getStatusValidadeColor(
   return "default";
 }
 
-export function criarLoteEstoque(values: LoteEstoqueFormValues): LoteEstoque {
-  const agora = new Date().toISOString();
+export function creerLotStock(values: LoteEstoqueFormValues): LoteEstoque {
+  const maintenant = new Date().toISOString();
 
   return {
     id: crypto.randomUUID(),
@@ -103,17 +103,17 @@ export function criarLoteEstoque(values: LoteEstoqueFormValues): LoteEstoque {
     dataValidade: values.dataValidade,
     origem: values.origem,
     observacao: values.observacao.trim(),
-    criadoEm: agora,
-    atualizadoEm: agora,
+    criadoEm: maintenant,
+    atualizadoEm: maintenant,
   };
 }
 
-export function atualizarLoteEstoque(
-  loteAtual: LoteEstoque,
+export function mettreAJourLotStock(
+  lotActuel: LoteEstoque,
   values: LoteEstoqueFormValues
 ): LoteEstoque {
   return {
-    ...loteAtual,
+    ...lotActuel,
     produtoId: values.produtoId,
     quantidadeInicial: values.quantidadeInicial,
     quantidadeAtual: values.quantidadeAtual,
@@ -125,65 +125,65 @@ export function atualizarLoteEstoque(
   };
 }
 
-export function loteParaFormValues(lote: LoteEstoque): LoteEstoqueFormValues {
+export function lotVersFormValues(lot: LoteEstoque): LoteEstoqueFormValues {
   return {
-    produtoId: lote.produtoId,
-    quantidadeInicial: lote.quantidadeInicial,
-    quantidadeAtual: lote.quantidadeAtual,
-    dataRecebimento: lote.dataRecebimento,
-    dataValidade: lote.dataValidade,
-    origem: lote.origem,
-    observacao: lote.observacao ?? "",
+    produtoId: lot.produtoId,
+    quantidadeInicial: lot.quantidadeInicial,
+    quantidadeAtual: lot.quantidadeAtual,
+    dataRecebimento: lot.dataRecebimento,
+    dataValidade: lot.dataValidade,
+    origem: lot.origem,
+    observacao: lot.observacao ?? "",
   };
 }
 
-export function getLoteDefaultValues(): LoteEstoqueFormValues {
+export function getLotDefaultValues(): LoteEstoqueFormValues {
   return {
     produtoId: "",
     quantidadeInicial: 1,
     quantidadeAtual: 1,
-    dataRecebimento: getHojeISO(),
+    dataRecebimento: getAujourdHuiISO(),
     dataValidade: "",
-    origem: "rancho",
+    origem: "ferme",
     observacao: "",
   };
 }
 
-export function getProdutoNome(produtos: Produto[], produtoId: string) {
-  return produtos.find((produto) => produto.id === produtoId)?.nome ?? "Produto não encontrado";
+export function getNomProduit(produits: Produto[], produtoId: string) {
+  return produits.find((produit) => produit.id === produtoId)?.nome ?? "Produit introuvable";
 }
 
-export function calcularResumoEstoquePorProduto(
-  produtos: Produto[],
-  lotes: LoteEstoque[]
+export function calculerResumeStockParProduit(
+  produits: Produto[],
+  lots: LoteEstoque[]
 ): EstoqueResumoProduto[] {
-  return produtos
-    .filter((produto) => produto.ativo)
-    .map((produto) => {
-      const lotesDoProduto = lotes.filter(
-        (lote) => lote.produtoId === produto.id && lote.quantidadeAtual > 0
+  return produits
+    .filter((produit) => produit.ativo)
+    .map((produit) => {
+      const lotsDuProduit = lots.filter(
+        (lot) => lot.produtoId === produit.id && lot.quantidadeAtual > 0
       );
 
-      const quantidadeTotal = lotesDoProduto.reduce(
-        (total, lote) => total + lote.quantidadeAtual,
+      const quantiteTotale = lotsDuProduit.reduce(
+        (total, lot) => total + lot.quantidadeAtual,
         0
       );
 
-      const validadeMaisProxima = lotesDoProduto
-        .map((lote) => lote.dataValidade)
+      const validiteLaPlusProche = lotsDuProduit
+        .map((lot) => lot.dataValidade)
         .filter(Boolean)
         .sort((a, b) => a.localeCompare(b))[0];
 
       return {
-        produtoId: produto.id,
-        produtoNome: produto.nome,
-        unidade: produto.unidade,
-        quantidadeTotal,
-        validadeMaisProxima,
-        statusValidade: getStatusValidade(validadeMaisProxima),
-        quantidadeLotes: lotesDoProduto.length,
+        produtoId: produit.id,
+        produtoNome: produit.nome,
+        unidade: produit.unidade,
+        quantidadeTotal: quantiteTotale,
+        validadeMaisProxima: validiteLaPlusProche,
+        statusValidade: getStatusValidite(validiteLaPlusProche),
+        quantidadeLotes: lotsDuProduit.length,
       };
     })
-    .filter((resumo) => resumo.quantidadeTotal > 0)
+    .filter((resume) => resume.quantidadeTotal > 0)
     .sort((a, b) => a.produtoNome.localeCompare(b.produtoNome));
 }

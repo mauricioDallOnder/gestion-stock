@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeRegistry } from "@/theme/ThemeRegistry";
+import { AppProvider } from "@/context/AppContext";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -13,8 +14,8 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Controle de Alimentação Escolar",
-  description: "Sistema de controle de estoque da alimentação escolar.",
+  title: "Contrôle de l'Alimentation Scolaire",
+  description: "Système de contrôle de stock de l'alimentation scolaire.",
 };
 
 export default function RootLayout({
@@ -23,12 +24,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={roboto.variable}>
+    <html lang="fr-FR" className={roboto.variable}>
       <body>
         <AppRouterCacheProvider>
           <ThemeRegistry>
             <CssBaseline />
-            {children}
+            <AppProvider>
+              {children}
+            </AppProvider>
           </ThemeRegistry>
         </AppRouterCacheProvider>
       </body>

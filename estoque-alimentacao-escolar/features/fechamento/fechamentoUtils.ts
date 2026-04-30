@@ -7,25 +7,25 @@ import {
 import { Produto } from "@/types/produto";
 
 export const mesesLabels: Record<MesFechamento, string> = {
-  1: "Janeiro",
-  2: "Fevereiro",
-  3: "Março",
-  4: "Abril",
-  5: "Maio",
-  6: "Junho",
-  7: "Julho",
-  8: "Agosto",
-  9: "Setembro",
-  10: "Outubro",
-  11: "Novembro",
-  12: "Dezembro",
+  1: "Janvier",
+  2: "Février",
+  3: "Mars",
+  4: "Avril",
+  5: "Mai",
+  6: "Juin",
+  7: "Juillet",
+  8: "Août",
+  9: "Septembre",
+  10: "Octobre",
+  11: "Novembre",
+  12: "Décembre",
 };
 
 export const statusLinhaLabels: Record<StatusLinhaFechamento, string> = {
   ok: "OK",
-  inconsistente: "Inconsistente",
-  estoque_baixo: "Estoque baixo",
-  sem_consumo: "Sem consumo",
+  Incohérent: "Incohérent",
+  Stock_faible: "Stock_faible",
+  Sans_consommation: "Sans_consommation",
 };
 
 export function getStatusLinhaColor(
@@ -35,11 +35,11 @@ export function getStatusLinhaColor(
     return "success";
   }
 
-  if (status === "inconsistente") {
+  if (status === "Incohérent") {
     return "error";
   }
 
-  if (status === "estoque_baixo") {
+  if (status === "Stock_faible") {
     return "warning";
   }
 
@@ -47,7 +47,7 @@ export function getStatusLinhaColor(
 }
 
 export function formatarNumero(valor: number) {
-  return new Intl.NumberFormat("pt-BR", {
+  return new Intl.NumberFormat("fr-FR", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   }).format(valor);
@@ -58,7 +58,7 @@ export function formatarData(dataISO?: string) {
     return "-";
   }
 
-  return new Date(`${dataISO}T00:00:00`).toLocaleDateString("pt-BR");
+  return new Date(`${dataISO}T00:00:00`).toLocaleDateString("fr-FR");
 }
 
 export function dataEstaNoMes(dataISO: string, ano: number, mes: number) {
@@ -120,15 +120,15 @@ export function calcularStatusLinha(params: {
   quantidadeConsumida: number;
 }): StatusLinhaFechamento {
   if (params.quantidadeConsumida < 0) {
-    return "inconsistente";
+    return "Incohérent";
   }
 
   if (params.estoqueAtualContado <= params.estoqueMinimo) {
-    return "estoque_baixo";
+    return "Stock_faible";
   }
 
   if (params.quantidadeConsumida === 0) {
-    return "sem_consumo";
+    return "Sans_consommation";
   }
 
   return "ok";
@@ -237,10 +237,10 @@ export function calcularTotaisFechamento(linhas: LinhaFechamentoMensal[]) {
       0
     ),
     totalInconsistencias: linhas.filter(
-      (linha) => linha.status === "inconsistente"
+      (linha) => linha.status === "Incohérent"
     ).length,
     totalEstoqueBaixo: linhas.filter(
-      (linha) => linha.status === "estoque_baixo"
+      (linha) => linha.status === "Stock_faible"
     ).length,
   };
 }

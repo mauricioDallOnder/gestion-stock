@@ -24,11 +24,11 @@ export function Topbar({ drawerWidth }: TopbarProps) {
     >
       <Toolbar>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Controle de Alimentação Escolar
+          Contrôle des repas scolaires
         </Typography>
 
         <Button color="inherit" variant="outlined">
-          Ano letivo 2026
+         Année 2026
         </Button>
       </Toolbar>
     </AppBar>

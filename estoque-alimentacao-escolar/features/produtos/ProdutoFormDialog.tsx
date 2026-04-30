@@ -16,7 +16,7 @@ import {
   ProdutoFormValues,
   unidadesProduto,
 } from "@/types/produto";
-import { produtoSchema } from "./produtoSchema";
+import { produitSchema } from "./produtoSchema";
 import {
   categoriaProdutoLabels,
   getProdutoDefaultValues,
@@ -68,7 +68,7 @@ export function ProdutoFormDialog({
   }
 
   function handleSubmit() {
-    const result = produtoSchema.safeParse(values);
+    const result = produitSchema.safeParse(values);
 
     if (!result.success) {
       const fieldErrors: ProdutoFormErrors = {};
@@ -91,24 +91,24 @@ export function ProdutoFormDialog({
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
-        {mode === "create" ? "Novo produto" : "Editar produto"}
+        {mode === "create" ? "Nouveau produit" : "Modifier le produit"}
       </DialogTitle>
 
       <DialogContent dividers>
         <Stack spacing={3} sx={{ pt: 1 }}>
           <TextField
-            label="Nome do produto"
+            label="Nom du produit"
             value={values.nome}
             onChange={(event) => handleChange("nome", event.target.value)}
             error={Boolean(errors.nome)}
-            helperText={errors.nome ?? "Exemplo: Arroz pct 5kg"}
+            helperText={errors.nome ?? "Exemple : Riz paquet 5 kg"}
             fullWidth
             autoFocus
           />
 
           <TextField
             select
-            label="Unidade"
+            label="Unité"
             value={values.unidade}
             onChange={(event) =>
               handleChange(
@@ -117,7 +117,7 @@ export function ProdutoFormDialog({
               )
             }
             error={Boolean(errors.unidade)}
-            helperText={errors.unidade ?? "Unidade usada no controle."}
+            helperText={errors.unidade ?? "Unité utilisée dans le contrôle."}
             fullWidth
           >
             {unidadesProduto.map((unidade) => (
@@ -129,7 +129,7 @@ export function ProdutoFormDialog({
 
           <TextField
             select
-            label="Categoria"
+            label="Catégorie"
             value={values.categoria}
             onChange={(event) =>
               handleChange(
@@ -139,7 +139,7 @@ export function ProdutoFormDialog({
             }
             error={Boolean(errors.categoria)}
             helperText={
-              errors.categoria ?? "Classificação do gênero alimentício."
+              errors.categoria ?? "Classification du produit alimentaire."
             }
             fullWidth
           >
@@ -151,7 +151,7 @@ export function ProdutoFormDialog({
           </TextField>
 
           <TextField
-            label="Estoque mínimo"
+            label="Stock minimum"
             type="number"
             value={values.estoqueMinimo}
             onChange={(event) =>
@@ -160,7 +160,7 @@ export function ProdutoFormDialog({
             error={Boolean(errors.estoqueMinimo)}
             helperText={
               errors.estoqueMinimo ??
-              "Quantidade mínima antes de gerar alerta de estoque baixo."
+              "Quantité minimale avant de générer une alerte de stock faible."
             }
             fullWidth
             slotProps={{
@@ -180,18 +180,18 @@ export function ProdutoFormDialog({
                 }
               />
             }
-            label={values.ativo ? "Produto ativo" : "Produto inativo"}
+            label={values.ativo ? "Produit actif" : "Produit inactif"}
           />
         </Stack>
       </DialogContent>
 
       <DialogActions sx={{ px: 3, py: 2 }}>
         <Button onClick={onClose} color="inherit">
-          Cancelar
+          Annuler
         </Button>
 
         <Button onClick={handleSubmit} variant="contained">
-          {mode === "create" ? "Cadastrar produto" : "Salvar alterações"}
+          {mode === "create" ? "Enregistrer le produit" : "Enregistrer les modifications"}
         </Button>
       </DialogActions>
     </Dialog>

@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { categoriasProduto, unidadesProduto } from "@/types/produto";
 
-export const produtoSchema = z.object({
+export const produitSchema = z.object({
   nome: z
     .string()
     .trim()
-    .min(2, "Informe pelo menos 2 caracteres.")
-    .max(120, "O nome deve ter no máximo 120 caracteres."),
+    .min(2, "Renseignez au moins 2 caractères.")
+    .max(120, "Le nom doit contenir au maximum 120 caractères."),
 
   unidade: z.enum(unidadesProduto),
 
@@ -14,10 +14,10 @@ export const produtoSchema = z.object({
 
   estoqueMinimo: z.coerce
     .number()
-    .min(0, "O estoque mínimo não pode ser negativo.")
-    .max(999999, "Valor muito alto."),
+    .min(0, "Le stock minimum ne peut pas être négatif.")
+    .max(999999, "Valeur trop élevée."),
 
   ativo: z.boolean(),
 });
 
-export type ProdutoSchemaInput = z.infer<typeof produtoSchema>;
+export type ProduitSchemaInput = z.infer<typeof produitSchema>;

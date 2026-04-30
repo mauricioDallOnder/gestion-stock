@@ -7,24 +7,24 @@ import {
 
 export const unidadeProdutoLabels: Record<UnidadeProduto, string> = {
   kg: "Kg",
-  g: "Gramas",
-  l: "Litros",
-  ml: "Mililitros",
-  un: "Unidade",
-  pct: "Pacote",
-  cx: "Caixa",
-  lata: "Lata",
-  garrafa: "Garrafa",
+  g: "Grammes",
+  l: "Litres",
+  ml: "Millilitres",
+  un: "Unité",
+  paquet: "Paquet",
+  boîte: "Boîte",
+  conserve: "Conserve",
+  bouteille: "Bouteille",
 };
 
 export const categoriaProdutoLabels: Record<CategoriaProduto, string> = {
-  cereais: "Cereais",
-  leguminosas: "Leguminosas",
-  proteinas: "Proteínas",
-  laticinios: "Laticínios",
-  bebidas: "Bebidas",
-  condimentos: "Condimentos",
-  outros: "Outros",
+  céréales: "Céréales",
+  légumineuses: "Légumineuses",
+  protéines: "Protéines",
+  produits_laitiers: "Produits laitiers",
+  boissons: "Boissons",
+  condiments: "Condiments",
+  autres: "Autres",
 };
 
 export function criarProduto(values: ProdutoFormValues): Produto {
@@ -70,8 +70,8 @@ export function produtoParaFormValues(produto: Produto): ProdutoFormValues {
 export function getProdutoDefaultValues(): ProdutoFormValues {
   return {
     nome: "",
-    unidade: "pct",
-    categoria: "outros",
+    unidade: "paquet",
+    categoria: "autres",
     estoqueMinimo: 0,
     ativo: true,
   };

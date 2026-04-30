@@ -2,13 +2,13 @@ export const mesesFechamento = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
 
 export type MesFechamento = (typeof mesesFechamento)[number];
 
-export type StatusFechamento = "rascunho" | "fechado" | "reaberto";
+export type StatusFechamento = "Brouillon" | "Clôturé" | "Rouvert";
 
 export type StatusLinhaFechamento =
   | "ok"
-  | "inconsistente"
-  | "estoque_baixo"
-  | "sem_consumo";
+  | "Incohérent"
+  | "Stock_faible"
+  | "Sans_consommation";
 
 export type LinhaFechamentoMensal = {
   id: string;

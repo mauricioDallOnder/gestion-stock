@@ -3,7 +3,6 @@
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
-import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -13,6 +12,7 @@ import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ToggleOffOutlinedIcon from "@mui/icons-material/ToggleOffOutlined";
 import ToggleOnOutlinedIcon from "@mui/icons-material/ToggleOnOutlined";
@@ -46,10 +46,10 @@ export function ProdutosTable({
           borderRadius: 3,
         }}
       >
-        <Typography variant="h6">Nenhum produto encontrado</Typography>
+        <Typography variant="h6">Aucun produit trouvé</Typography>
 
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Ajuste os filtros ou cadastre um novo produto.
+          Ajustez les filtres ou enregistrez un nouveau produit.
         </Typography>
       </Box>
     );
@@ -60,12 +60,12 @@ export function ProdutosTable({
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Produto</TableCell>
-            <TableCell>Categoria</TableCell>
-            <TableCell>Unidade</TableCell>
-            <TableCell align="right">Estoque mínimo</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell align="right">Ações</TableCell>
+            <TableCell>Produit</TableCell>
+            <TableCell>Catégorie</TableCell>
+            <TableCell>Unité</TableCell>
+            <TableCell align="right">Stock minimum</TableCell>
+            <TableCell>Statut</TableCell>
+            <TableCell align="right">Actions</TableCell>
           </TableRow>
         </TableHead>
 
@@ -73,7 +73,9 @@ export function ProdutosTable({
           {produtos.map((produto) => (
             <TableRow key={produto.id} hover>
               <TableCell>
-                <Typography sx={{fontWeight:"700"}}>{produto.nome}</Typography>
+                <Typography sx={{ fontWeight: 700 }}>
+                  {produto.nome}
+                </Typography>
 
                 <Typography variant="caption" color="text.secondary">
                   {produto.id}
@@ -88,7 +90,7 @@ export function ProdutosTable({
 
               <TableCell>
                 <Chip
-                  label={produto.ativo ? "Ativo" : "Inativo"}
+                  label={produto.ativo ? "Actif" : "Inactif"}
                   color={produto.ativo ? "success" : "default"}
                   size="small"
                   variant={produto.ativo ? "filled" : "outlined"}
@@ -96,15 +98,25 @@ export function ProdutosTable({
               </TableCell>
 
               <TableCell align="right">
-                <Stack sx={{direction:"row" ,spacing:"1", justifyContent:"flex-end"}} >
-                  <Tooltip title="Editar produto">
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    gap: 1,
+                  }}
+                >
+                  <Tooltip title="Modifier le produit">
                     <IconButton onClick={() => onEdit(produto)} size="small">
                       <EditOutlinedIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
 
                   <Tooltip
-                    title={produto.ativo ? "Inativar produto" : "Ativar produto"}
+                    title={
+                      produto.ativo
+                        ? "Désactiver le produit"
+                        : "Activer le produit"
+                    }
                   >
                     <IconButton
                       onClick={() => onToggleAtivo(produto.id)}
@@ -118,16 +130,16 @@ export function ProdutosTable({
                     </IconButton>
                   </Tooltip>
 
-                  <Tooltip title="Excluir produto">
+                  <Tooltip title="Supprimer le produit">
                     <IconButton
                       onClick={() => onDelete(produto.id)}
                       size="small"
                       color="error"
                     >
-                     
+                      <DeleteOutlineOutlinedIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
-                </Stack>
+                </Box>
               </TableCell>
             </TableRow>
           ))}

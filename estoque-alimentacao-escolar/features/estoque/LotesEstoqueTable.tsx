@@ -13,17 +13,18 @@ import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { LoteEstoque } from "@/types/estoque";
 import { Produto } from "@/types/produto";
 import {
-  calcularDiasAteValidade,
-  formatarData,
-  getProdutoNome,
-  getStatusValidade,
-  getStatusValidadeColor,
-  origemEstoqueLabels,
-  statusValidadeLabels,
+  calculerJoursJusquaValidite,
+  formaterDate,
+  getNomProduit,
+  getStatusValidite,
+  getStatusValiditeColor,
+  origineStockLabels,
+  statusValiditeLabels,
 } from "./estoqueUtils";
 
 type LotesEstoqueTableProps = {
@@ -50,10 +51,10 @@ export function LotesEstoqueTable({
           borderRadius: 3,
         }}
       >
-        <Typography variant="h6">Nenhum lote encontrado</Typography>
+        <Typography variant="h6">Aucun lot trouvé</Typography>
 
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Cadastre um recebimento ou ajuste os filtros.
+          Enregistrez une réception ou ajustez les filtres.
         </Typography>
       </Box>
     );
@@ -64,27 +65,27 @@ export function LotesEstoqueTable({
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Produto</TableCell>
-            <TableCell>Origem</TableCell>
-            <TableCell align="right">Recebido</TableCell>
-            <TableCell align="right">Atual</TableCell>
-            <TableCell>Recebimento</TableCell>
-            <TableCell>Validade</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell align="right">Ações</TableCell>
+            <TableCell>Produit</TableCell>
+            <TableCell>Origine</TableCell>
+            <TableCell align="right">Reçu</TableCell>
+            <TableCell align="right">Actuel</TableCell>
+            <TableCell>Réception</TableCell>
+            <TableCell>Date de péremption</TableCell>
+            <TableCell>Statut</TableCell>
+            <TableCell align="right">Actions</TableCell>
           </TableRow>
         </TableHead>
 
         <TableBody>
           {lotes.map((lote) => {
-            const status = getStatusValidade(lote.dataValidade);
-            const dias = calcularDiasAteValidade(lote.dataValidade);
+            const status = getStatusValidite(lote.dataValidade);
+            const dias = calculerJoursJusquaValidite(lote.dataValidade);
 
             return (
               <TableRow key={lote.id} hover>
                 <TableCell>
-                  <Typography sx={{fontWeight:"700"}}>
-                    {getProdutoNome(produtos, lote.produtoId)}
+                  <Typography sx={{ fontWeight: 700 }}>
+                    {getNomProduit(produtos, lote.produtoId)}
                   </Typography>
 
                   <Typography variant="caption" color="text.secondary">
@@ -92,25 +93,27 @@ export function LotesEstoqueTable({
                   </Typography>
                 </TableCell>
 
-                <TableCell>{origemEstoqueLabels[lote.origem]}</TableCell>
+                <TableCell>{origineStockLabels[lote.origem]}</TableCell>
 
                 <TableCell align="right">{lote.quantidadeInicial}</TableCell>
 
                 <TableCell align="right">
-                  <Typography sx={{fontWeight:"700"}}>{lote.quantidadeAtual}</Typography>
+                  <Typography sx={{ fontWeight: 700 }}>
+                    {lote.quantidadeAtual}
+                  </Typography>
                 </TableCell>
 
-                <TableCell>{formatarData(lote.dataRecebimento)}</TableCell>
+                <TableCell>{formaterDate(lote.dataRecebimento)}</TableCell>
 
                 <TableCell>
                   <Stack spacing={0.5}>
-                    <Typography>{formatarData(lote.dataValidade)}</Typography>
+                    <Typography>{formaterDate(lote.dataValidade)}</Typography>
 
                     {dias !== null ? (
                       <Typography variant="caption" color="text.secondary">
                         {dias < 0
-                          ? `Vencido há ${Math.abs(dias)} dia(s)`
-                          : `Vence em ${dias} dia(s)`}
+                          ? `Expiré depuis ${Math.abs(dias)} jour(s)`
+                          : `Expire dans ${dias} jour(s)`}
                       </Typography>
                     ) : null}
                   </Stack>
@@ -118,30 +121,36 @@ export function LotesEstoqueTable({
 
                 <TableCell>
                   <Chip
-                    label={statusValidadeLabels[status]}
-                    color={getStatusValidadeColor(status)}
+                    label={statusValiditeLabels[status]}
+                    color={getStatusValiditeColor(status)}
                     size="small"
                   />
                 </TableCell>
 
                 <TableCell align="right">
-                  <Stack sx={{direction:"row",justifyContent:"flex-end"}}spacing={1} >
-                    <Tooltip title="Editar lote">
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: 1,
+                    }}
+                  >
+                    <Tooltip title="Modifier le lot">
                       <IconButton onClick={() => onEdit(lote)} size="small">
                         <EditOutlinedIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="Excluir lote">
+                    <Tooltip title="Supprimer le lot">
                       <IconButton
                         onClick={() => onDelete(lote.id)}
                         size="small"
                         color="error"
                       >
-                        
+                        <DeleteOutlineOutlinedIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                  </Stack>
+                  </Box>
                 </TableCell>
               </TableRow>
             );

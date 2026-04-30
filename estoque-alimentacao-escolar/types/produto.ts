@@ -4,22 +4,22 @@ export const unidadesProduto = [
   "l",
   "ml",
   "un",
-  "pct",
-  "cx",
-  "lata",
-  "garrafa",
+  "paquet",
+  "boîte",
+  "conserve",
+  "bouteille",
 ] as const;
 
 export type UnidadeProduto = (typeof unidadesProduto)[number];
 
 export const categoriasProduto = [
-  "cereais",
-  "leguminosas",
-  "proteinas",
-  "laticinios",
-  "bebidas",
-  "condimentos",
-  "outros",
+  "céréales",
+  "légumineuses",
+  "protéines",
+  "produits_laitiers",
+  "boissons",
+  "condiments",
+  "autres",
 ] as const;
 
 export type CategoriaProduto = (typeof categoriasProduto)[number];

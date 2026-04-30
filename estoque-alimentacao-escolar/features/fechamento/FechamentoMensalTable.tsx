@@ -42,10 +42,10 @@ export function FechamentoMensalTable({
           borderRadius: 3,
         }}
       >
-        <Typography variant="h6">Nenhuma linha de fechamento</Typography>
+        <Typography variant="h6">Aucune ligne de clôture</Typography>
 
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Cadastre produtos ativos para gerar o fechamento mensal.
+          Enregistrez des produits actifs pour générer la clôture mensuelle.
         </Typography>
       </Box>
     );
@@ -56,34 +56,36 @@ export function FechamentoMensalTable({
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Gênero alimentício</TableCell>
-            <TableCell align="right">Estoque anterior</TableCell>
-            <TableCell align="right">Recebido no mês</TableCell>
-            <TableCell align="right">Estoque contado</TableCell>
-            <TableCell align="right">Consumido</TableCell>
-            <TableCell>Validade próxima</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Observação</TableCell>
+            <TableCell>Produit alimentaire</TableCell>
+            <TableCell align="right">Stock précédent</TableCell>
+            <TableCell align="right">Reçu pendant le mois</TableCell>
+            <TableCell align="right">Stock compté</TableCell>
+            <TableCell align="right">Consommé</TableCell>
+            <TableCell>Date de péremption proche</TableCell>
+            <TableCell>Statut</TableCell>
+            <TableCell>Observation</TableCell>
           </TableRow>
         </TableHead>
 
         <TableBody>
           {linhas.map((linha) => {
-            const inconsistente = linha.status === "inconsistente";
+            const Incohérent = linha.status === "Incohérent";
 
             return (
               <TableRow
                 key={linha.id}
                 hover
                 sx={{
-                  bgcolor: inconsistente ? "rgba(211, 47, 47, 0.06)" : undefined,
+                  bgcolor: Incohérent ? "rgba(211, 47, 47, 0.06)" : undefined,
                 }}
               >
                 <TableCell sx={{ minWidth: 240 }}>
-                  <Typography fontWeight={700}>{linha.produtoNome}</Typography>
+                  <Typography sx={{ fontWeight: 700 }}>
+                    {linha.produtoNome}
+                  </Typography>
 
                   <Typography variant="caption" color="text.secondary">
-                    Unidade: {linha.unidade} · Mínimo: {linha.estoqueMinimo}
+                    Unité : {linha.unidade} · Minimum : {linha.estoqueMinimo}
                   </Typography>
                 </TableCell>
 
@@ -104,7 +106,7 @@ export function FechamentoMensalTable({
                     onChange={(event) =>
                       onChangeEstoqueAtual(linha.id, Number(event.target.value))
                     }
-                    error={inconsistente}
+                    error={Incohérent}
                     slotProps={{
                       htmlInput: {
                         min: 0,
@@ -127,15 +129,15 @@ export function FechamentoMensalTable({
                     }}
                   >
                     <Typography
-                      fontWeight={700}
-                      color={inconsistente ? "error.main" : "text.primary"}
+                      sx={{ fontWeight: 700 }}
+                      color={Incohérent ? "error.main" : "text.primary"}
                     >
                       {formatarNumero(linha.quantidadeConsumida)}
                     </Typography>
 
-                    {inconsistente ? (
+                    {Incohérent ? (
                       <Typography variant="caption" color="error.main">
-                        Consumo negativo
+                        Consommation négative
                       </Typography>
                     ) : null}
                   </Box>
@@ -159,7 +161,7 @@ export function FechamentoMensalTable({
                     onChange={(event) =>
                       onChangeObservacao(linha.id, event.target.value)
                     }
-                    placeholder="Opcional"
+                    placeholder="Facultatif"
                     fullWidth
                   />
                 </TableCell>

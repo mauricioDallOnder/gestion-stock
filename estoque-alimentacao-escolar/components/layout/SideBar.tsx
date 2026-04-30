@@ -16,19 +16,19 @@ const menuItems = [
     path: "/",
   },
   {
-    label: "Produtos",
+    label: "Produits",
     path: "/produtos",
   },
   {
-    label: "Estoque",
+    label: "Stock",
     path: "/estoque",
   },
   {
-    label: "Fechamento mensal",
+    label: "clôture mensuelle",
     path: "/fechamento-mensal",
   },
   {
-    label: "Relatórios",
+    label: "Rapports",
     path: "/relatorios",
   },
 ];

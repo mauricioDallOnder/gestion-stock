@@ -24,12 +24,12 @@ export function FechamentoResumoCards({ linhas }: FechamentoResumoCardsProps) {
       <Grid size={{ xs: 12, md: 3 }}>
         <Card>
           <CardContent>
-            <Stack direction="row" spacing={2} alignItems="center">
+            <Stack sx={{direction:"row",alignItems:"center"}}spacing={2} >
               <Inventory2OutlinedIcon color="primary" />
 
               <div>
                 <Typography variant="body2" color="text.secondary">
-                  Produtos
+                  Produits
                 </Typography>
 
                 <Typography variant="h5">{totais.totalProdutos}</Typography>
@@ -42,12 +42,12 @@ export function FechamentoResumoCards({ linhas }: FechamentoResumoCardsProps) {
       <Grid size={{ xs: 12, md: 3 }}>
         <Card>
           <CardContent>
-            <Stack direction="row" spacing={2} alignItems="center">
+            <Stack sx={{direction:"row",alignItems:"center"}} spacing={2} >
               <TrendingDownOutlinedIcon color="primary" />
 
               <div>
                 <Typography variant="body2" color="text.secondary">
-                  Consumo total
+                  Consommation totale
                 </Typography>
 
                 <Typography variant="h5">
@@ -62,12 +62,12 @@ export function FechamentoResumoCards({ linhas }: FechamentoResumoCardsProps) {
       <Grid size={{ xs: 12, md: 3 }}>
         <Card>
           <CardContent>
-            <Stack direction="row" spacing={2} alignItems="center">
+            <Stack sx={{direction:"row",alignItems:"center"}} spacing={2} >
               <WarningAmberOutlinedIcon color="warning" />
 
               <div>
                 <Typography variant="body2" color="text.secondary">
-                  Estoque baixo
+                  Stock_faible
                 </Typography>
 
                 <Typography variant="h5">{totais.totalEstoqueBaixo}</Typography>
@@ -80,12 +80,12 @@ export function FechamentoResumoCards({ linhas }: FechamentoResumoCardsProps) {
       <Grid size={{ xs: 12, md: 3 }}>
         <Card>
           <CardContent>
-            <Stack direction="row" spacing={2} alignItems="center">
+            <Stack sx={{direction:"row",alignItems:"center"}} spacing={2} >
               <ErrorOutlineOutlinedIcon color="error" />
 
               <div>
                 <Typography variant="body2" color="text.secondary">
-                  Inconsistências
+                  Incohérences
                 </Typography>
 
                 <Typography variant="h5">
