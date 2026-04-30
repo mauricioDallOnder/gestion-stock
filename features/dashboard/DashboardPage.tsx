@@ -462,10 +462,9 @@ export function DashboardPage() {
                               color="text.secondary"
                             >
                               Péremption :{" "}
-                              {new Date(
-                                `${lot.dateValidite}T00:00:00`
-                              ).toLocaleDateString("fr-FR")}{" "}
-                              · Qté : {lot.quantiteActuelle} {produit.unite}
+{new Date(`${lot.dateValidite}T00:00:00`).toLocaleDateString("fr-FR")}
+{lot.numeroLot?.trim() ? ` · Lot : ${lot.numeroLot}` : ""}
+{" "}· Qté : {lot.quantiteActuelle} {produit.unite}
                             </Typography>
                           </Box>
                         </Box>

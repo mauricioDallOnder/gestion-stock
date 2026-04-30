@@ -1,9 +1,10 @@
-import { LotStock } from "@/types/estoque";
+import type { LotStock } from "@/types/estoque";
 
 export const lotsStockMock: LotStock[] = [
   {
     id: "lot-001",
     produitId: "prod-001",
+    numeroLot: "LOT-RIZ-2026-001",
     quantiteInitiale: 20,
     quantiteActuelle: 14,
     dateReception: "2026-03-05",
@@ -16,6 +17,7 @@ export const lotsStockMock: LotStock[] = [
   {
     id: "lot-002",
     produitId: "prod-002",
+    numeroLot: "LOT-HAR-2026-002",
     quantiteInitiale: 30,
     quantiteActuelle: 9,
     dateReception: "2026-03-05",
@@ -28,6 +30,7 @@ export const lotsStockMock: LotStock[] = [
   {
     id: "lot-003",
     produitId: "prod-004",
+    numeroLot: "LOT-LAIT-2026-003",
     quantiteInitiale: 12,
     quantiteActuelle: 8,
     dateReception: "2026-03-10",
@@ -40,6 +43,7 @@ export const lotsStockMock: LotStock[] = [
   {
     id: "lot-004",
     produitId: "prod-003",
+    numeroLot: "LOT-PAT-2026-004",
     quantiteInitiale: 10,
     quantiteActuelle: 6,
     dateReception: "2026-03-08",

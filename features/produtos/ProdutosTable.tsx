@@ -1,8 +1,13 @@
 "use client";
 
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -11,51 +16,40 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import ToggleOffOutlinedIcon from "@mui/icons-material/ToggleOffOutlined";
-import ToggleOnOutlinedIcon from "@mui/icons-material/ToggleOnOutlined";
-import { Produit } from "@/types/produto";
-import {
-  categorieProduitLabels,
-  uniteProduitLabels,
-} from "./produtoUtils";
+
+import type { Produit } from "@/types/produto";
 
 type ProduitsTableProps = {
   produits: Produit[];
   onEdit: (produit: Produit) => void;
   onToggleActif: (produitId: string) => void;
-  onDelete: (produitId: string) => void;
 };
 
 export function ProduitsTable({
   produits,
   onEdit,
   onToggleActif,
-  onDelete,
 }: ProduitsTableProps) {
   if (produits.length === 0) {
     return (
-      <Box
+      <Paper
+        variant="outlined"
         sx={{
-          p: 4,
+          p: 3,
           textAlign: "center",
-          border: "1px dashed",
-          borderColor: "divider",
-          borderRadius: 3,
+          bgcolor: "background.default",
         }}
       >
-        <Typography variant="h6">Aucun produit trouvé</Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Ajustez les filtres ou enregistrez un nouveau produit.
+        <Typography variant="body2" color="text.secondary">
+          Aucun produit trouvé.
         </Typography>
-      </Box>
+      </Paper>
     );
   }
 
   return (
-    <TableContainer>
-      <Table>
+    <TableContainer component={Paper} variant="outlined">
+      <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell>Produit</TableCell>
@@ -71,17 +65,24 @@ export function ProduitsTable({
           {produits.map((produit) => (
             <TableRow key={produit.id} hover>
               <TableCell>
-                <Typography sx={{ fontWeight: 700 }}>{produit.nom}</Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {produit.id}
+                <Typography variant="body2" fontWeight={700}>
+                  {produit.nom}
                 </Typography>
               </TableCell>
 
-              <TableCell>{categorieProduitLabels[produit.categorie]}</TableCell>
+              <TableCell>
+                <Typography variant="body2">{produit.categorie}</Typography>
+              </TableCell>
 
-              <TableCell>{uniteProduitLabels[produit.unite]}</TableCell>
+              <TableCell>
+                <Typography variant="body2">{produit.unite}</Typography>
+              </TableCell>
 
-              <TableCell align="right">{produit.stockMinimum}</TableCell>
+              <TableCell align="right">
+                <Typography variant="body2">
+                  {produit.stockMinimum} {produit.unite}
+                </Typography>
+              </TableCell>
 
               <TableCell>
                 <Chip
@@ -94,40 +95,38 @@ export function ProduitsTable({
 
               <TableCell align="right">
                 <Box
-                  sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    gap: 0.5,
+                  }}
                 >
-                  <Tooltip title="Modifier le produit">
-                    <IconButton onClick={() => onEdit(produit)} size="small">
+                  <Tooltip title="Modifier">
+                    <IconButton
+                      size="small"
+                      onClick={() => onEdit(produit)}
+                      aria-label={`Modifier ${produit.nom}`}
+                    >
                       <EditOutlinedIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
 
-                  <Tooltip
-                    title={
-                      produit.actif
-                        ? "Désactiver le produit"
-                        : "Activer le produit"
-                    }
-                  >
+                  <Tooltip title={produit.actif ? "Inactiver" : "Réactiver"}>
                     <IconButton
-                      onClick={() => onToggleActif(produit.id)}
                       size="small"
+                      color={produit.actif ? "warning" : "success"}
+                      onClick={() => onToggleActif(produit.id)}
+                      aria-label={
+                        produit.actif
+                          ? `Inactiver ${produit.nom}`
+                          : `Réactiver ${produit.nom}`
+                      }
                     >
                       {produit.actif ? (
-                        <ToggleOnOutlinedIcon fontSize="small" />
+                        <VisibilityOffOutlinedIcon fontSize="small" />
                       ) : (
-                        <ToggleOffOutlinedIcon fontSize="small" />
+                        <VisibilityOutlinedIcon fontSize="small" />
                       )}
-                    </IconButton>
-                  </Tooltip>
-
-                  <Tooltip title="Supprimer le produit">
-                    <IconButton
-                      onClick={() => onDelete(produit.id)}
-                      size="small"
-                      color="error"
-                    >
-                      <DeleteOutlineOutlinedIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
                 </Box>

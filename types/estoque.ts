@@ -15,6 +15,7 @@ export type StatutValidite =
 export type LotStock = {
   id: string;
   produitId: string;
+  numeroLot?: string;
   quantiteInitiale: number;
   quantiteActuelle: number;
   dateReception: string;
@@ -28,6 +29,7 @@ export type LotStock = {
 // ─── Valeurs du formulaire ─────────────────────────────────────────────────────
 export type LotStockFormValues = {
   produitId: string;
+  numeroLot: string;
   quantiteInitiale: number;
   quantiteActuelle: number;
   dateReception: string;

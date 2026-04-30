@@ -27,11 +27,9 @@ type FiltreStatut = "tous" | "actifs" | "inactifs";
 export function ProduitsPage() {
   const {
     produits,
-    lots,
     ajouterProduit,
     modifierProduit,
     basculerActifProduit,
-    supprimerProduit,
   } = useAppContext();
 
   const [mounted, setMounted] = useState(false);
@@ -90,25 +88,6 @@ export function ProduitsPage() {
     }
 
     handleFermerDialogue();
-  }
-
-  function handleSupprimerProduit(produitId: string) {
-    const produit = produits.find((item) => item.id === produitId);
-
-    if (!produit) return;
-
-    const lotsAssocies = lots.filter((lot) => lot.produitId === produitId);
-
-    const message =
-      lotsAssocies.length > 0
-        ? `Le produit « ${produit.nom} » possède ${lotsAssocies.length} lot(s) associé(s). Pour conserver l'historique du stock, il ne sera pas supprimé définitivement : il sera désactivé. Continuer ?`
-        : `Voulez-vous vraiment supprimer le produit « ${produit.nom} » ?`;
-
-    const confirme = window.confirm(message);
-
-    if (!confirme) return;
-
-    supprimerProduit(produitId);
   }
 
   if (!mounted) {
@@ -212,8 +191,15 @@ export function ProduitsPage() {
             produits={produitsFiltres}
             onEdit={handleModifierProduit}
             onToggleActif={basculerActifProduit}
-            onDelete={handleSupprimerProduit}
           />
+
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="caption" color="text.secondary">
+              Le bouton « Inactiver » permet de retirer un produit des vues
+              opérationnelles sans supprimer son historique de stock. Un produit
+              inactif n’apparaît plus dans les alertes du tableau de bord.
+            </Typography>
+          </Box>
 
           <Box sx={{ mt: 3 }}>
             <Typography variant="body2" color="text.secondary">

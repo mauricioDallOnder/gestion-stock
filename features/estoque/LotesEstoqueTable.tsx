@@ -1,9 +1,12 @@
 "use client";
 
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
-import Stack from "@mui/material/Stack";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -12,12 +15,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import { LotStock } from "@/types/estoque";
-import { Produit } from "@/types/produto";
+
+import type { LotStock } from "@/types/estoque";
+import type { Produit } from "@/types/produto";
+
 import {
-  calculerJoursJusquaValidite,
   formaterDate,
   getNomProduit,
   getStatutValidite,
@@ -41,29 +43,28 @@ export function LotsStockTable({
 }: LotsStockTableProps) {
   if (lots.length === 0) {
     return (
-      <Box
+      <Paper
+        variant="outlined"
         sx={{
-          p: 4,
+          p: 3,
           textAlign: "center",
-          border: "1px dashed",
-          borderColor: "divider",
-          borderRadius: 3,
+          bgcolor: "background.default",
         }}
       >
-        <Typography variant="h6">Aucun lot trouvé</Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Enregistrez une réception ou ajustez les filtres.
+        <Typography variant="body2" color="text.secondary">
+          Aucun lot trouvé.
         </Typography>
-      </Box>
+      </Paper>
     );
   }
 
   return (
-    <TableContainer>
-      <Table>
+    <TableContainer component={Paper} variant="outlined">
+      <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell>Produit</TableCell>
+            <TableCell>Numéro de lot</TableCell>
             <TableCell>Origine</TableCell>
             <TableCell align="right">Reçu</TableCell>
             <TableCell align="right">Actuel</TableCell>
@@ -76,43 +77,53 @@ export function LotsStockTable({
 
         <TableBody>
           {lots.map((lot) => {
+            const produit = produits.find((item) => item.id === lot.produitId);
             const statut = getStatutValidite(lot.dateValidite);
-            const jours = calculerJoursJusquaValidite(lot.dateValidite);
 
             return (
               <TableRow key={lot.id} hover>
                 <TableCell>
-                  <Typography sx={{ fontWeight: 700 }}>
+                  <Typography variant="body2" fontWeight={700}>
                     {getNomProduit(produits, lot.produitId)}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {lot.id}
-                  </Typography>
                 </TableCell>
-
-                <TableCell>{origineStockLabels[lot.origine]}</TableCell>
-
-                <TableCell align="right">{lot.quantiteInitiale}</TableCell>
-
-                <TableCell align="right">
-                  <Typography sx={{ fontWeight: 700 }}>
-                    {lot.quantiteActuelle}
-                  </Typography>
-                </TableCell>
-
-                <TableCell>{formaterDate(lot.dateReception)}</TableCell>
 
                 <TableCell>
-                  <Stack spacing={0.5}>
-                    <Typography>{formaterDate(lot.dateValidite)}</Typography>
-                    {jours !== null ? (
-                      <Typography variant="caption" color="text.secondary">
-                        {jours < 0
-                          ? `Expiré depuis ${Math.abs(jours)} jour(s)`
-                          : `Expire dans ${jours} jour(s)`}
-                      </Typography>
-                    ) : null}
-                  </Stack>
+                  <Typography variant="body2">
+                    {lot.numeroLot?.trim() ? lot.numeroLot : "-"}
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Chip
+                    label={origineStockLabels[lot.origine]}
+                    size="small"
+                    variant="outlined"
+                  />
+                </TableCell>
+
+                <TableCell align="right">
+                  <Typography variant="body2">
+                    {lot.quantiteInitiale} {produit?.unite ?? ""}
+                  </Typography>
+                </TableCell>
+
+                <TableCell align="right">
+                  <Typography variant="body2" fontWeight={700}>
+                    {lot.quantiteActuelle} {produit?.unite ?? ""}
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography variant="body2">
+                    {formaterDate(lot.dateReception)}
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography variant="body2">
+                    {formaterDate(lot.dateValidite)}
+                  </Typography>
                 </TableCell>
 
                 <TableCell>
@@ -125,18 +136,28 @@ export function LotsStockTable({
 
                 <TableCell align="right">
                   <Box
-                    sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: 0.5,
+                    }}
                   >
-                    <Tooltip title="Modifier le lot">
-                      <IconButton onClick={() => onEdit(lot)} size="small">
+                    <Tooltip title="Modifier">
+                      <IconButton
+                        size="small"
+                        onClick={() => onEdit(lot)}
+                        aria-label="Modifier le lot"
+                      >
                         <EditOutlinedIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
+
                     <Tooltip title="Supprimer le lot">
                       <IconButton
-                        onClick={() => onDelete(lot.id)}
                         size="small"
                         color="error"
+                        onClick={() => onDelete(lot.id)}
+                        aria-label="Supprimer le lot"
                       >
                         <DeleteOutlineOutlinedIcon fontSize="small" />
                       </IconButton>

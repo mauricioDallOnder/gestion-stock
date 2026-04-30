@@ -1,5 +1,5 @@
-import { Produit } from "@/types/produto";
-import {
+import type { Produit } from "@/types/produto";
+import type {
   LotStock,
   LotStockFormValues,
   OrigineStock,
@@ -40,7 +40,9 @@ export function formaterDate(dateISO?: string): string {
 }
 
 // ─── Calcul des jours restants jusqu'à la péremption ───────────────────────────
-export function calculerJoursJusquaValidite(dateValidite?: string): number | null {
+export function calculerJoursJusquaValidite(
+  dateValidite?: string
+): number | null {
   if (!dateValidite) return null;
 
   const aujourdHui = new Date(`${getAujourdHuiISO()}T00:00:00`);
@@ -58,6 +60,7 @@ export function getStatutValidite(dateValidite?: string): StatutValidite {
   if (jours < 0) return "expire";
   if (jours <= 15) return "critique";
   if (jours <= 45) return "attention";
+
   return "ok";
 }
 
@@ -68,6 +71,7 @@ export function getStatutValiditeColor(
   if (statut === "expire" || statut === "critique") return "error";
   if (statut === "attention") return "warning";
   if (statut === "ok") return "success";
+
   return "default";
 }
 
@@ -78,6 +82,7 @@ export function creerLotStock(values: LotStockFormValues): LotStock {
   return {
     id: crypto.randomUUID(),
     produitId: values.produitId,
+    numeroLot: values.numeroLot.trim(),
     quantiteInitiale: values.quantiteInitiale,
     quantiteActuelle: values.quantiteActuelle,
     dateReception: values.dateReception,
@@ -97,6 +102,7 @@ export function mettreAJourLotStock(
   return {
     ...lotActuel,
     produitId: values.produitId,
+    numeroLot: values.numeroLot.trim(),
     quantiteInitiale: values.quantiteInitiale,
     quantiteActuelle: values.quantiteActuelle,
     dateReception: values.dateReception,
@@ -111,6 +117,7 @@ export function mettreAJourLotStock(
 export function lotVersFormValues(lot: LotStock): LotStockFormValues {
   return {
     produitId: lot.produitId,
+    numeroLot: lot.numeroLot ?? "",
     quantiteInitiale: lot.quantiteInitiale,
     quantiteActuelle: lot.quantiteActuelle,
     dateReception: lot.dateReception,
@@ -124,6 +131,7 @@ export function lotVersFormValues(lot: LotStock): LotStockFormValues {
 export function getLotDefaultValues(): LotStockFormValues {
   return {
     produitId: "",
+    numeroLot: "",
     quantiteInitiale: 1,
     quantiteActuelle: 1,
     dateReception: getAujourdHuiISO(),

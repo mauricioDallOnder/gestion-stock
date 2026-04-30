@@ -5,6 +5,13 @@ export const lotStockSchema = z
   .object({
     produitId: z.string().min(1, "Sélectionnez un produit."),
 
+    numeroLot: z
+      .string()
+      .trim()
+      .max(80, "Le numéro de lot doit contenir au maximum 80 caractères.")
+      .optional()
+      .default(""),
+
     quantiteInitiale: z.coerce
       .number()
       .positive("La quantité reçue doit être supérieure à zéro.")
