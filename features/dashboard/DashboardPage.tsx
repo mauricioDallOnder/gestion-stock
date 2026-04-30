@@ -597,9 +597,9 @@ export function DashboardPage() {
 
                           <Typography
                             variant="caption"
-                            sx={{fontWeight:"700"}}
+                            sx={{fontWeight:"700",flexShrink: 0}}
                             color="error.main"
-                            sx={{ flexShrink: 0 }}
+                           
                           >
                             {totalStock} / {produit.stockMinimum}{" "}
                             {produit.unite}
