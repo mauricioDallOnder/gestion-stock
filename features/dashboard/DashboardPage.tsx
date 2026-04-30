@@ -160,16 +160,37 @@ export function DashboardPage() {
     setMounted(true);
   }, []);
 
+  const produitsById = useMemo(
+    () => new Map(produits.map((produit) => [produit.id, produit])),
+    [produits]
+  );
+
   const produitsActifs = useMemo(
     () => produits.filter((produit) => produit.actif),
     [produits]
+  );
+
+  /*
+    Importante:
+    Aqui filtramos apenas lotes ligados a produtos existentes E ativos.
+
+    Se um produto foi desativado, seus lotes continuam preservados no histórico,
+    mas não aparecem mais no dashboard como alerta operacional.
+  */
+  const lotsAvecProduitActif = useMemo(
+    () =>
+      lots.filter((lot) => {
+        const produit = produitsById.get(lot.produitId);
+        return produit?.actif === true;
+      }),
+    [lots, produitsById]
   );
 
   const totalProduitsActifs = produitsActifs.length;
 
   const alertesValidite = useMemo(
     () =>
-      lots.filter((lot) => {
+      lotsAvecProduitActif.filter((lot) => {
         const statut = getStatutValidite(lot.dateValidite);
 
         return (
@@ -178,21 +199,19 @@ export function DashboardPage() {
           statut === "expire"
         );
       }),
-    [lots]
+    [lotsAvecProduitActif]
   );
 
   const produitsStockFaible = useMemo(
     () =>
-      produits.filter((produit) => {
-        if (!produit.actif) return false;
-
-        const totalStock = lots
+      produitsActifs.filter((produit) => {
+        const totalStock = lotsAvecProduitActif
           .filter((lot) => lot.produitId === produit.id)
           .reduce((sum, lot) => sum + lot.quantiteActuelle, 0);
 
         return totalStock <= produit.stockMinimum;
       }),
-    [lots, produits]
+    [lotsAvecProduitActif, produitsActifs]
   );
 
   const moisActuel = (new Date().getMonth() + 1) as MoisCloture;
@@ -228,7 +247,6 @@ export function DashboardPage() {
 
   return (
     <Box>
-      {/* En-tête */}
       <Box
         sx={{
           display: "flex",
@@ -274,7 +292,6 @@ export function DashboardPage() {
         </Box>
       </Box>
 
-      {/* Cartes KPI */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <IndicateurCard
@@ -290,7 +307,7 @@ export function DashboardPage() {
           <IndicateurCard
             titre="Alertes de péremption"
             valeur={alertesValidite.length.toString()}
-            description="Critique, attention ou expiré"
+            description="Produits actifs uniquement"
             icon={<WarningAmberOutlinedIcon />}
             accent="warning"
           />
@@ -327,9 +344,7 @@ export function DashboardPage() {
         </Grid>
       </Grid>
 
-      {/* Section détail */}
       <Grid container spacing={3}>
-        {/* Alertes de péremption */}
         <Grid size={{ xs: 12, lg: 7 }}>
           <Card sx={{ height: "100%" }}>
             <CardContent sx={{ p: 3 }}>
@@ -375,7 +390,7 @@ export function DashboardPage() {
                   />
 
                   <Typography variant="body2" color="text.secondary">
-                    Aucune alerte de péremption pour le moment.
+                    Aucune alerte de péremption pour les produits actifs.
                   </Typography>
                 </Box>
               ) : (
@@ -387,9 +402,9 @@ export function DashboardPage() {
                   }}
                 >
                   {alertesValidite.slice(0, 5).map((lot) => {
-                    const produit = produits.find(
-                      (item) => item.id === lot.produitId
-                    );
+                    const produit = produitsById.get(lot.produitId);
+
+                    if (!produit || !produit.actif) return null;
 
                     const statut = getStatutValidite(lot.dateValidite);
 
@@ -439,7 +454,7 @@ export function DashboardPage() {
                               fontWeight={700}
                               noWrap
                             >
-                              {produit?.nom ?? "Produit inconnu"}
+                              {produit.nom}
                             </Typography>
 
                             <Typography
@@ -450,7 +465,7 @@ export function DashboardPage() {
                               {new Date(
                                 `${lot.dateValidite}T00:00:00`
                               ).toLocaleDateString("fr-FR")}{" "}
-                              · Qté : {lot.quantiteActuelle} {produit?.unite}
+                              · Qté : {lot.quantiteActuelle} {produit.unite}
                             </Typography>
                           </Box>
                         </Box>
@@ -481,7 +496,6 @@ export function DashboardPage() {
           </Card>
         </Grid>
 
-        {/* Stock insuffisant */}
         <Grid size={{ xs: 12, lg: 5 }}>
           <Card sx={{ height: "100%" }}>
             <CardContent sx={{ p: 3 }}>
@@ -528,7 +542,7 @@ export function DashboardPage() {
                   />
 
                   <Typography variant="body2" color="text.secondary">
-                    Tous les produits sont au-dessus du minimum.
+                    Tous les produits actifs sont au-dessus du minimum.
                   </Typography>
                 </Box>
               ) : (
@@ -540,7 +554,7 @@ export function DashboardPage() {
                   }}
                 >
                   {produitsStockFaible.slice(0, 6).map((produit) => {
-                    const totalStock = lots
+                    const totalStock = lotsAvecProduitActif
                       .filter((lot) => lot.produitId === produit.id)
                       .reduce((sum, lot) => sum + lot.quantiteActuelle, 0);
 

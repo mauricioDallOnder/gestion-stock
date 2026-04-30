@@ -27,6 +27,7 @@ type FiltreStatut = "tous" | "actifs" | "inactifs";
 export function ProduitsPage() {
   const {
     produits,
+    lots,
     ajouterProduit,
     modifierProduit,
     basculerActifProduit,
@@ -96,9 +97,14 @@ export function ProduitsPage() {
 
     if (!produit) return;
 
-    const confirme = window.confirm(
-      `Voulez-vous vraiment supprimer le produit « ${produit.nom} » ?`
-    );
+    const lotsAssocies = lots.filter((lot) => lot.produitId === produitId);
+
+    const message =
+      lotsAssocies.length > 0
+        ? `Le produit « ${produit.nom} » possède ${lotsAssocies.length} lot(s) associé(s). Pour conserver l'historique du stock, il ne sera pas supprimé définitivement : il sera désactivé. Continuer ?`
+        : `Voulez-vous vraiment supprimer le produit « ${produit.nom} » ?`;
+
+    const confirme = window.confirm(message);
 
     if (!confirme) return;
 
@@ -212,7 +218,7 @@ export function ProduitsPage() {
           <Box sx={{ mt: 3 }}>
             <Typography variant="body2" color="text.secondary">
               Les données sont enregistrées automatiquement dans le navigateur
-              (localStorage). Elles persistent entre les sessions jusqu&apos;au
+              localStorage. Elles persistent entre les sessions jusqu&apos;au
               vidage du cache.
             </Typography>
           </Box>
