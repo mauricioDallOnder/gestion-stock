@@ -83,7 +83,7 @@ export function LotsStockTable({
             return (
               <TableRow key={lot.id} hover>
                 <TableCell>
-                  <Typography variant="body2" fontWeight={700}>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>
                     {getNomProduit(produits, lot.produitId)}
                   </Typography>
                 </TableCell>
@@ -109,7 +109,7 @@ export function LotsStockTable({
                 </TableCell>
 
                 <TableCell align="right">
-                  <Typography variant="body2" fontWeight={700}>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>
                     {lot.quantiteActuelle} {produit?.unite ?? ""}
                   </Typography>
                 </TableCell>
