@@ -358,7 +358,7 @@ export function DashboardPage() {
                   mb: 1,
                 }}
               >
-                <Typography variant="h6" fontWeight={700}>
+                <Typography variant="h6" sx={{fontWeight:"700"}}>
                   Alertes de péremption
                 </Typography>
 
@@ -451,7 +451,7 @@ export function DashboardPage() {
                           <Box sx={{ minWidth: 0 }}>
                             <Typography
                               variant="body2"
-                              fontWeight={700}
+                              sx={{fontWeight:"700"}}
                               noWrap
                             >
                               {produit.nom}
@@ -508,7 +508,7 @@ export function DashboardPage() {
                   mb: 1,
                 }}
               >
-                <Typography variant="h6" fontWeight={700}>
+                <Typography variant="h6" sx={{fontWeight:"700"}}>
                   Stock insuffisant
                 </Typography>
 
@@ -588,7 +588,7 @@ export function DashboardPage() {
                         >
                           <Typography
                             variant="body2"
-                            fontWeight={700}
+                            sx={{fontWeight:"700"}}
                             noWrap
                             sx={{ mr: 1 }}
                           >
@@ -597,7 +597,7 @@ export function DashboardPage() {
 
                           <Typography
                             variant="caption"
-                            fontWeight={700}
+                            sx={{fontWeight:"700"}}
                             color="error.main"
                             sx={{ flexShrink: 0 }}
                           >
@@ -635,5 +635,6 @@ export function DashboardPage() {
         </Grid>
       </Grid>
     </Box>
+
   );
 }
