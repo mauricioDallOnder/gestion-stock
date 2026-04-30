@@ -20,11 +20,8 @@ import Typography from "@mui/material/Typography";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useAppContext } from "@/context/AppContext";
 
-import {
-  ClotureMensuelle,
-  MoisCloture,
-  moisCloture,
-} from "@/types/fechamento";
+import type { ClotureMensuelle, MoisCloture } from "@/types/fechamento";
+import { moisCloture } from "@/types/fechamento";
 
 import { ClotureMensuelleTable } from "./FechamentoMensalTable";
 import { ClotureResumeCards } from "./FechamentoResumoCards";
@@ -131,7 +128,7 @@ export function ClotureMensuellePage() {
   }
 
   function handleCloturerMois() {
-    if (!cloture) return;
+    if (!cloture || !totaux) return;
 
     if (totaux.totalIncoherences > 0) {
       window.alert(
