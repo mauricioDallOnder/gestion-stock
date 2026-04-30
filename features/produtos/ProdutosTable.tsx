@@ -65,7 +65,7 @@ export function ProduitsTable({
           {produits.map((produit) => (
             <TableRow key={produit.id} hover>
               <TableCell>
-                <Typography variant="body2" fontWeight={700}>
+                <Typography variant="body2" sx={{ fontWeight: 700 }}>
                   {produit.nom}
                 </Typography>
               </TableCell>
