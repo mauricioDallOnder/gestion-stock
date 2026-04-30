@@ -132,9 +132,11 @@ export function Sidebar({
               >
                 <ListItemText
                   primary={item.label}
-                  primaryTypographyProps={{
-                    sx: {
-                      fontWeight: selected ? 700 : 500,
+                  slotProps={{
+                    primary: {
+                      sx: {
+                        fontWeight: selected ? 700 : 500,
+                      },
                     },
                   }}
                 />
