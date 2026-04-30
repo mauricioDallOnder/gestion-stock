@@ -15,10 +15,7 @@ import type { LotStockFormValues, OrigineStock } from "@/types/estoque";
 import type { Produit } from "@/types/produto";
 
 import { originesStock } from "@/types/estoque";
-import {
-  getLotDefaultValues,
-  origineStockLabels,
-} from "./estoqueUtils";
+import { getLotDefaultValues, origineStockLabels } from "./estoqueUtils";
 
 type LotStockFormDialogProps = {
   open: boolean;
@@ -225,7 +222,11 @@ export function LotStockFormDialog({
               }
               error={Boolean(errors.dateReception)}
               helperText={errors.dateReception}
-              InputLabelProps={{ shrink: true }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
               fullWidth
             />
 
@@ -238,7 +239,11 @@ export function LotStockFormDialog({
               }
               error={Boolean(errors.dateValidite)}
               helperText={errors.dateValidite}
-              InputLabelProps={{ shrink: true }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
               fullWidth
             />
           </Box>
