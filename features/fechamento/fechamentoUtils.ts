@@ -36,7 +36,6 @@ export const statutClotureLabels: Record<StatutCloture, string> = {
   rouvert: "Rouvert",
 };
 
-// ─── Couleur MUI associée au statut de ligne ───────────────────────────────────
 export function getStatutLigneColor(
   statut: StatutLigneCloture
 ): "success" | "warning" | "error" | "default" {
@@ -46,7 +45,6 @@ export function getStatutLigneColor(
   return "default";
 }
 
-// ─── Formatage des nombres ─────────────────────────────────────────────────────
 export function formaterNombre(valeur: number): string {
   return new Intl.NumberFormat("fr-FR", {
     minimumFractionDigits: 0,
@@ -54,13 +52,11 @@ export function formaterNombre(valeur: number): string {
   }).format(valeur);
 }
 
-// ─── Formatage d'une date ISO en format français ───────────────────────────────
 export function formaterDate(dateISO?: string): string {
   if (!dateISO) return "-";
   return new Date(`${dateISO}T00:00:00`).toLocaleDateString("fr-FR");
 }
 
-// ─── Vérifie si une date appartient à un mois/année donné ──────────────────────
 export function dateEstDansLeMois(
   dateISO: string,
   annee: number,
@@ -70,7 +66,6 @@ export function dateEstDansLeMois(
   return date.getFullYear() === annee && date.getMonth() + 1 === mois;
 }
 
-// ─── Quantité reçue d'un produit dans le mois ──────────────────────────────────
 export function calculerQuantiteRecueDansLeMois(
   lots: LotStock[],
   produitId: string,
@@ -86,7 +81,6 @@ export function calculerQuantiteRecueDansLeMois(
     .reduce((total, lot) => total + lot.quantiteInitiale, 0);
 }
 
-// ─── Stock actuel total d'un produit ───────────────────────────────────────────
 export function calculerStockActuelParProduit(
   lots: LotStock[],
   produitId: string
@@ -96,7 +90,6 @@ export function calculerStockActuelParProduit(
     .reduce((total, lot) => total + lot.quantiteActuelle, 0);
 }
 
-// ─── Date de péremption la plus proche pour un produit ─────────────────────────
 export function getValiditePlusProche(
   lots: LotStock[],
   produitId: string
@@ -108,20 +101,16 @@ export function getValiditePlusProche(
     .sort((a, b) => a.localeCompare(b))[0];
 }
 
-// ─── Calcul de la consommation mensuelle ───────────────────────────────────────
 export function calculerConsommationMensuelle(params: {
   stockAnterieur: number;
   quantiteRecue: number;
   stockActuelCompte: number;
 }): number {
   return (
-    params.stockAnterieur +
-    params.quantiteRecue -
-    params.stockActuelCompte
+    params.stockAnterieur + params.quantiteRecue - params.stockActuelCompte
   );
 }
 
-// ─── Calcul du statut d'une ligne ──────────────────────────────────────────────
 export function calculerStatutLigne(params: {
   stockMinimum: number;
   stockActuelCompte: number;
@@ -133,7 +122,6 @@ export function calculerStatutLigne(params: {
   return "ok";
 }
 
-// ─── Recalcul d'une ligne (consommation + statut) ──────────────────────────────
 export function recalculerLigneCloture(
   ligne: LigneClotureMensuelle
 ): LigneClotureMensuelle {
@@ -149,15 +137,11 @@ export function recalculerLigneCloture(
     quantiteConsommee,
   });
 
-  return {
-    ...ligne,
-    quantiteConsommee,
-    statut,
-  };
+  return { ...ligne, quantiteConsommee, statut };
 }
 
-// ─── Stocks anteriores fictifs (pour la démo) ──────────────────────────────────
-export const stockAnterieurMock: Record<string, number> = {
+// ─── Bootstrap mock (utilisé si pas de clôture précédente) ─────────────────────
+export const stockAnterieurBootstrap: Record<string, number> = {
   "prod-001": 18,
   "prod-002": 16,
   "prod-003": 4,
@@ -166,12 +150,18 @@ export const stockAnterieurMock: Record<string, number> = {
   "prod-006": 2,
 };
 
-// ─── Génération des lignes de clôture pour un mois donné ───────────────────────
+// ─── Génération des lignes de clôture ──────────────────────────────────────────
 type GenererLignesClotureParams = {
   produits: Produit[];
   lots: LotStock[];
   annee: number;
   mois: MoisCloture;
+  /**
+   * Callback pour obtenir le stock anterieur d'un produit.
+   * Permet de chaîner avec la clôture du mois précédent.
+   * Si non fourni, utilise le mock de bootstrap.
+   */
+  getStockAnterieur?: (produitId: string) => number;
 };
 
 export function genererLignesCloture({
@@ -179,11 +169,28 @@ export function genererLignesCloture({
   lots,
   annee,
   mois,
+  getStockAnterieur,
 }: GenererLignesClotureParams): LigneClotureMensuelle[] {
   return produits
     .filter((produit) => produit.actif)
     .map((produit) => {
-      const stockAnterieur = stockAnterieurMock[produit.id] ?? 0;
+      // Stock anterieur : callback en priorité, sinon bootstrap, sinon 0
+      let stockAnterieur = getStockAnterieur
+        ? getStockAnterieur(produit.id)
+        : 0;
+
+      if (stockAnterieur === 0 && !getStockAnterieur) {
+        stockAnterieur = stockAnterieurBootstrap[produit.id] ?? 0;
+      }
+
+      // Si le callback retourne 0 et qu'on n'a aucune clôture précédente,
+      // on tombe sur le bootstrap (utile pour la première clôture jamais créée)
+      if (stockAnterieur === 0 && getStockAnterieur) {
+        const bootstrap = stockAnterieurBootstrap[produit.id];
+        if (bootstrap !== undefined) {
+          stockAnterieur = bootstrap;
+        }
+      }
 
       const quantiteRecue = calculerQuantiteRecueDansLeMois(
         lots,
@@ -191,12 +198,7 @@ export function genererLignesCloture({
         annee,
         mois
       );
-
-      const stockActuelCompte = calculerStockActuelParProduit(
-        lots,
-        produit.id
-      );
-
+      const stockActuelCompte = calculerStockActuelParProduit(lots, produit.id);
       const validitePlusProche = getValiditePlusProche(lots, produit.id);
 
       const ligneBase: LigneClotureMensuelle = {
@@ -219,31 +221,20 @@ export function genererLignesCloture({
     .sort((a, b) => a.produitNom.localeCompare(b.produitNom));
 }
 
-// ─── Calcul des totaux d'une clôture ───────────────────────────────────────────
 export function calculerTotauxCloture(lignes: LigneClotureMensuelle[]) {
   return {
     totalProduits: lignes.length,
     totalStockAnterieur: lignes.reduce(
-      (total, ligne) => total + ligne.stockAnterieur,
+      (total, l) => total + l.stockAnterieur,
       0
     ),
-    totalRecu: lignes.reduce(
-      (total, ligne) => total + ligne.quantiteRecue,
-      0
-    ),
+    totalRecu: lignes.reduce((total, l) => total + l.quantiteRecue, 0),
     totalStockActuel: lignes.reduce(
-      (total, ligne) => total + ligne.stockActuelCompte,
+      (total, l) => total + l.stockActuelCompte,
       0
     ),
-    totalConsomme: lignes.reduce(
-      (total, ligne) => total + ligne.quantiteConsommee,
-      0
-    ),
-    totalIncoherences: lignes.filter(
-      (ligne) => ligne.statut === "incoherent"
-    ).length,
-    totalStockFaible: lignes.filter(
-      (ligne) => ligne.statut === "stock_faible"
-    ).length,
+    totalConsomme: lignes.reduce((total, l) => total + l.quantiteConsommee, 0),
+    totalIncoherences: lignes.filter((l) => l.statut === "incoherent").length,
+    totalStockFaible: lignes.filter((l) => l.statut === "stock_faible").length,
   };
 }
